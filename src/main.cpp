@@ -1,8 +1,6 @@
 #include <random>
 #include <bitcoin/bitcoin.hpp>
 
-bc::ec_secret random_secret(std::default_random_engine& engine);
-
 int main(int argc, char* argv[])
 {
     // Search string required
@@ -26,7 +24,12 @@ int main(int argc, char* argv[])
 
     while (true)
     {
-        bc::ec_secret secret = random_secret(engine);
+        // Create random secret
+        bc::ec_secret secret;
+        for (uint8_t& byte: secret)
+        {
+            byte = engine() % std::numeric_limits<uint8_t>::max();
+        }
 
         // Create random private key and address
         bc::wallet::ec_private private_key(secret);
@@ -43,17 +46,5 @@ int main(int argc, char* argv[])
     }
 
     return 0;
-}
-
-bc::ec_secret random_secret(std::default_random_engine& engine)
-{
-    bc::ec_secret secret;
-
-    for (uint8_t& byte: secret)
-    {
-        byte = engine() % std::numeric_limits<uint8_t>::max();
-    }
-
-    return secret;
 }
 
